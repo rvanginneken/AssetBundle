@@ -1,0 +1,32 @@
+{
+  "name": "roy-van-ginneken/dynamic-asset-include-bundle",
+  "description": "Dynamically include assets.",
+  "type": "library",
+  "license": "MIT",
+  "keywords": [
+    "asset",
+    "symfony",
+    "bundle",
+    "cache"
+  ],
+  "authors": [
+    {
+      "name": "Roy Van Ginneken",
+      "email": "royvanginneken@gmail.com"
+    }
+  ],
+  "require": {
+    "php": "^7.1",
+    "psr/cache": "^1.0",
+    "twig/twig": "^2.0",
+    "symfony/config": "^3.3",
+    "symfony/dependency-injection": "^3.3",
+    "symfony/http-foundation": "^3.3",
+    "symfony/http-kernel": "^3.3"
+  },
+  "autoload": {
+    "psr-4": {
+      "RoyVanGinneken\\DynamicAssetIncludeBundle\\": "src/"
+    }
+  }
+}
