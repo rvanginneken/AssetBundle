@@ -1,8 +1,8 @@
 <?php
 
-namespace RoyVanGinneken\DynamicAssetIncludeBundle\Twig;
+namespace RVanGinneken\DynamicAssetIncludeBundle\Twig;
 
-use RoyVanGinneken\DynamicAssetIncludeBundle\Services\AssetService;
+use RVanGinneken\DynamicAssetIncludeBundle\Services\AssetService;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 

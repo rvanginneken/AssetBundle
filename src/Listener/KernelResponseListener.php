@@ -1,8 +1,8 @@
 <?php
 
-namespace RoyVanGinneken\DynamicAssetIncludeBundle\Listener;
+namespace RVanGinneken\DynamicAssetIncludeBundle\Listener;
 
-use RoyVanGinneken\DynamicAssetIncludeBundle\Services\AssetService;
+use RVanGinneken\DynamicAssetIncludeBundle\Services\AssetService;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 

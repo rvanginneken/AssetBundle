@@ -1,5 +1,5 @@
 {
-  "name": "roy-van-ginneken/dynamic-asset-include-bundle",
+  "name": "rvanginneken/dynamic-asset-include-bundle",
   "description": "Dynamically include assets.",
   "type": "library",
   "license": "MIT",
@@ -26,7 +26,7 @@
   },
   "autoload": {
     "psr-4": {
-      "RoyVanGinneken\\DynamicAssetIncludeBundle\\": "src/"
+      "RVanGinneken\\DynamicAssetIncludeBundle\\": "src/"
     }
   }
 }
