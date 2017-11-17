@@ -34,8 +34,8 @@ class KernelResponseListener
             return;
         }
 
-        $this->injectHtml($response, '</head>', $this->assetService->renderCss());
-        $this->injectHtml($response, '</body>', $this->assetService->renderJavascript());
+        $this->injectHtml($response, '</head>', $this->assetService->render(AssetService::TARGET_HEAD));
+        $this->injectHtml($response, '</body>', $this->assetService->render(AssetService::TARGET_BODY));
     }
 
     private function injectHtml(Response $response, string $closingTag, string $html): void
