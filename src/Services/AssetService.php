@@ -19,10 +19,29 @@ class AssetService
         $this->webDir = realpath($webDir);
 
         $this->assets = [
+            'css_file' => [],
             'css' => [],
+            'javascript_file' => [],
             'javascript' => [],
-            'inline_javascript' => [],
         ];
+    }
+
+    public function addAsset(string $type, string $asset, int $priority): void
+    {
+        if (!isset($this->assets[$type])) {
+            throw new \RuntimeException('Type \''.$type.'\' is not supported by the \''.__CLASS__.'\'.');
+        }
+
+        $this->assets[$type][] = ['asset' => $asset, 'priority' => $priority];
+    }
+
+    public static function compareAssets(array $a, $b): int
+    {
+        if ($a['priority'] === $b['priority']) {
+            return 0;
+        }
+
+        return ($a['priority'] > $b['priority']) ? -1 : +1;
     }
 
     public function renderCss(): string
@@ -32,17 +51,25 @@ class AssetService
         if (null === $html = $this->cacheService->cacheGet($key)) {
             $html = '';
 
+            if (\count($this->assets['css_file'])) {
+                usort($this->assets['css_file'], ['self', 'compareAssets']);
+
+                $html .= '<style>';
+                foreach ($this->assets['css_file'] as $cssFile) {
+                    if (0 !== strpos($cssFile['asset'], 'http')) {
+                        $cssFile['asset'] = $this->webDir.'/'.ltrim($cssFile['asset'], '/');
+                    }
+                    $html .= file_get_contents($cssFile['asset']);
+                }
+                $html .= '</style>';
+            }
+
             if (\count($this->assets['css'])) {
                 usort($this->assets['css'], ['self', 'compareAssets']);
 
-                $html .= '<style>';
                 foreach ($this->assets['css'] as $css) {
-                    if (0 !== strpos($css['content'], 'http')) {
-                        $css['content'] = $this->webDir.'/'.ltrim($css['content'], '/');
-                    }
-                    $html .= file_get_contents($css['content']);
+                    $html .= $css['asset'];
                 }
-                $html .= '</style>';
             }
 
             $this->cacheService->cacheSet($key, $html);
@@ -58,22 +85,22 @@ class AssetService
         if (null === $html = $this->cacheService->cacheGet($key)) {
             $html = '';
 
-            if (\count($this->assets['javascript'])) {
-                usort($this->assets['javascript'], ['self', 'compareAssets']);
+            if (\count($this->assets['javascript_file'])) {
+                usort($this->assets['javascript_file'], ['self', 'compareAssets']);
 
-                foreach ($this->assets['javascript'] as $js) {
-                    if (0 !== strpos($js['content'], 'http')) {
-                        $js['content'] = '/'.ltrim($js['content'], '/');
+                foreach ($this->assets['javascript_file'] as $javascriptFile) {
+                    if (0 !== strpos($javascriptFile['asset'], 'http')) {
+                        $javascriptFile['asset'] = '/'.ltrim($javascriptFile['asset'], '/');
                     }
-                    $html .= '<script type="text/javascript" src="'.$js['content'].'"></script>';
+                    $html .= '<script type="text/javascript" src="'.$javascriptFile['asset'].'"></script>';
                 }
             }
 
-            if (\count($this->assets['inline_javascript'])) {
-                usort($this->assets['inline_javascript'], ['self', 'compareAssets']);
+            if (\count($this->assets['javascript'])) {
+                usort($this->assets['javascript'], ['self', 'compareAssets']);
 
-                foreach ($this->assets['inline_javascript'] as $js) {
-                    $html .= $js['content'];
+                foreach ($this->assets['javascript'] as $javascript) {
+                    $html .= $javascript['asset'];
                 }
             }
 
@@ -81,43 +108,6 @@ class AssetService
         }
 
         return $html;
-    }
-
-    public static function compareAssets(array $a, $b): int
-    {
-        if ($a['priority'] === $b['priority']) {
-            return 0;
-        }
-
-        return ($a['priority'] > $b['priority']) ? -1 : +1;
-    }
-
-    public function addCssFile(string $file, int $priority = 0): void
-    {
-        $this->addAsset('css', $file, $priority);
-    }
-
-    public function addJavascriptFile(string $file, int $priority = 0): void
-    {
-        $this->addAsset('javascript', $file, $priority);
-    }
-
-    public function addInlineJavascript(string $inline, int $priority = 0): void
-    {
-        $this->addAsset('inline_javascript', $inline, $priority);
-    }
-
-    private function addAsset(string $type, string $content, int $priority): void
-    {
-        if (!isset($this->assets[$type])) {
-            throw new \RuntimeException('Type \''.$type.'\' is not supported by the \''.__CLASS__.'\'.');
-        }
-
-        if (in_array($content, array_column($this->assets[$type], 'content'), true)) {
-            throw new \RuntimeException('Content \''.$content.'\' already added for type \''.$type.'\' in \''.__CLASS__.'\'.');
-        }
-
-        $this->assets[$type][] = ['content' => $content, 'priority' => $priority];
     }
 
     private function getCacheKey(string $prefix): string

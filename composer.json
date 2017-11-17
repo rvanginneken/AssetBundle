@@ -7,7 +7,9 @@
     "asset",
     "symfony",
     "bundle",
-    "cache"
+    "cache",
+    "twig",
+    "include"
   ],
   "authors": [
     {

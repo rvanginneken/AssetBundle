@@ -34,21 +34,34 @@ Note: priorities are optional and are only added to these examples to show their
 
 Include a stylesheet:
 ```twig
-    {{- add_stylesheet('css/hello_world.css', 0) -}}
+    {% asset 'css_file', 'css/hello_world.css', 0 %}
+```
+
+Include inline style:
+```twig
+    {%- set inline_style_hello_world -%}
+        <style>
+            body {
+                background-color: lightblue;
+            }
+        </style>
+    {%- endset -%}
+  
+    {% asset 'css', inline_style_hello_world, 0 %}
 ```
 
 Include a javascript file:
 ```twig
-    {{- add_javascript('js/hello_world.js', 0) -}}
+    {% asset 'javascript_file', 'js/hello_world.js', 0 %}
 ```
 
 Include inline javascript:
 ```twig
-    {%- set inline_hello_world -%}
+    {%- set inline_javascript_hello_world -%}
         <script type="text/javascript">
             console.log('Hello world!');
         </script>
     {%- endset -%}
     
-    {{- add_inline_javascript(inline_hello_world, 0) -}}
+    {% asset 'javascript', inline_javascript_hello_world, 0 %}
 ```
