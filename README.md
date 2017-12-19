@@ -4,8 +4,6 @@ AssetBundle
 The AssetBundle makes it easy to include assets at any point in your twig files and render it at the end of the \<head\> and \<body\> tags in the page. No blocks needed.
 Stylesheets are printed inline and all results are cached in production, following Symfony's *cache.app* settings.
 
-Build for Symfony 3.3 in PHP 7.1.
-
 Installation
 ------------
 
