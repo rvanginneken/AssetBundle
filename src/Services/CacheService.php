@@ -1,6 +1,6 @@
 <?php
 
-namespace RVanGinneken\DynamicAssetIncludeBundle\Services;
+namespace RVanGinneken\AssetBundle\Services;
 
 use Psr\Cache\CacheItemPoolInterface;
 

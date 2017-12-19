@@ -1,6 +1,6 @@
 <?php
 
-namespace RVanGinneken\DynamicAssetIncludeBundle\Twig;
+namespace RVanGinneken\AssetBundle\Twig;
 
 use Twig\Node\Node;
 

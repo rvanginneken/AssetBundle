@@ -1,7 +1,7 @@
-DynamicAssetIncludeBundle
+AssetBundle
 =============
 
-The DynamicAssetIncludeBundle makes it easy to include assets at any point in your twig files and render it at the end of the \<head\> and \<body\> tags in the page. No blocks needed.
+The AssetBundle makes it easy to include assets at any point in your twig files and render it at the end of the \<head\> and \<body\> tags in the page. No blocks needed.
 Stylesheets are printed inline and all results are cached in production, following Symfony's *cache.app* settings.
 
 Build for Symfony 3.3 in PHP 7.1.
@@ -11,7 +11,7 @@ Installation
 
 Require the bundle with composer:
 ```bash
-    $ composer require rvanginneken/dynamic-asset-include-bundle
+    $ composer require rvanginneken/asset-bundle
 ```
 
 Enable the bundle in the AppKernel:
@@ -20,7 +20,7 @@ Enable the bundle in the AppKernel:
     {
         $bundles = [
             // ...
-            new \RVanGinneken\DynamicAssetIncludeBundle\RVanGinnekenDynamicAssetIncludeBundle(),
+            new \RVanGinneken\AssetBundle\RVanGinnekenAssetBundle(),
             // ...
         ];
     }

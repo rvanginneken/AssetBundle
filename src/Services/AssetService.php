@@ -1,6 +1,6 @@
 <?php
 
-namespace RVanGinneken\DynamicAssetIncludeBundle\Services;
+namespace RVanGinneken\AssetBundle\Services;
 
 use Symfony\Component\HttpFoundation\RequestStack;
 

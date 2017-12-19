@@ -1,6 +1,6 @@
 {
-  "name": "rvanginneken/dynamic-asset-include-bundle",
-  "description": "Dynamically include assets.",
+  "name": "rvanginneken/asset-bundle",
+  "description": "Include assets at any point, which are cached and injected at the end of head or body.",
   "type": "library",
   "license": "MIT",
   "keywords": [
@@ -28,7 +28,7 @@
   },
   "autoload": {
     "psr-4": {
-      "RVanGinneken\\DynamicAssetIncludeBundle\\": "src/"
+      "RVanGinneken\\AssetBundle\\": "src/"
     }
   }
 }

@@ -1,8 +1,8 @@
 <?php
 
-namespace RVanGinneken\DynamicAssetIncludeBundle\Twig;
+namespace RVanGinneken\AssetBundle\Twig;
 
-use RVanGinneken\DynamicAssetIncludeBundle\Services\AssetService;
+use RVanGinneken\AssetBundle\Services\AssetService;
 use Twig\Extension\AbstractExtension;
 
 class AssetExtension extends AbstractExtension

@@ -1,9 +1,9 @@
 <?php
 
-namespace RVanGinneken\DynamicAssetIncludeBundle;
+namespace RVanGinneken\AssetBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-class RVanGinnekenDynamicAssetIncludeBundle extends Bundle
+class RVanGinnekenAssetBundle extends Bundle
 {
 }

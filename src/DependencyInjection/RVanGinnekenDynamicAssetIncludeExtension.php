@@ -1,6 +1,6 @@
 <?php
 
-namespace RVanGinneken\DynamicAssetIncludeBundle\DependencyInjection;
+namespace RVanGinneken\AssetBundle\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
@@ -12,7 +12,7 @@ use Symfony\Component\DependencyInjection\Loader;
  *
  * @see http://symfony.com/doc/current/cookbook/bundles/extension.html
  */
-class RVanGinnekenDynamicAssetIncludeExtension extends Extension
+class RVanGinnekenAssetExtension extends Extension
 {
     /**
      * {@inheritdoc}
