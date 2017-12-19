@@ -27,10 +27,10 @@ class AssetService
         $this->webDir = realpath($webDir);
 
         $this->types = [
-            'css_file' => ['target' => self::TARGET_HEAD, 'template' => '<style>%s</style>', 'render_type' => self::RENDER_TYPE_SCRIPT_TO_INLINE, 'priority' => 128],
-            'css' => ['target' => self::TARGET_HEAD, 'template' => '%s', 'render_type' => self::RENDER_TYPE_INLINE, 'priority' => 64],
-            'javascript_file' => ['target' => self::TARGET_BODY, 'template' => '<script type="text/javascript" src="%s"></script>', 'render_type' => self::RENDER_TYPE_SCRIPT, 'priority' => 128],
-            'javascript' => ['target' => self::TARGET_BODY, 'template' => '%s', 'render_type' => self::RENDER_TYPE_INLINE, 'priority' => 64],
+            'css_file' => ['target' => self::TARGET_HEAD, 'template' => '<style>%s</style>', 'render_type' => self::RENDER_TYPE_SCRIPT_TO_INLINE, 'priority' => 128, 'cache' => true],
+            'css' => ['target' => self::TARGET_HEAD, 'template' => '%s', 'render_type' => self::RENDER_TYPE_INLINE, 'priority' => 64, 'cache' => true],
+            'javascript_file' => ['target' => self::TARGET_BODY, 'template' => '<script type="text/javascript" src="%s"></script>', 'render_type' => self::RENDER_TYPE_SCRIPT, 'priority' => 128, 'cache' => true],
+            'javascript' => ['target' => self::TARGET_BODY, 'template' => '%s', 'render_type' => self::RENDER_TYPE_INLINE, 'priority' => 64, 'cache' => false],
         ];
     }
 
@@ -45,40 +45,54 @@ class AssetService
 
     public function render(int $target): string
     {
-        $key = $this->getCacheKey('asset_render_'.$target);
+        $html = '';
 
-        if (null === $html = $this->cacheService->cacheGet($key)) {
-            $html = '';
-
-            uasort($this->types, ['self', 'comparePriorities']);
-            foreach ($this->types as $type => $config) {
-                if ($config['target'] !== $target || !isset($this->assets[$type])) {
-                    continue;
-                }
-
-                usort($this->assets[$type], ['self', 'comparePriorities']);
-                foreach ($this->assets[$type] as $asset) {
-                    switch ($config['render_type']) {
-                        case self::RENDER_TYPE_INLINE:
-                            $html .= sprintf($config['template'], $asset['asset']);
-                            break;
-                        case self::RENDER_TYPE_SCRIPT:
-                            if (0 !== strpos($asset['asset'], 'http')) {
-                                $asset['asset'] = '/'.ltrim($asset['asset'], '/');
-                            }
-                            $html .= sprintf($config['template'], $asset['asset']);
-                            break;
-                        case self::RENDER_TYPE_SCRIPT_TO_INLINE:
-                            if (0 !== strpos($asset['asset'], 'http')) {
-                                $asset['asset'] = $this->webDir.'/'.ltrim($asset['asset'], '/');
-                            }
-                            $html .= sprintf($config['template'], file_get_contents($asset['asset']));
-                            break;
-                    }
-                }
+        uasort($this->types, ['self', 'comparePriorities']);
+        foreach ($this->types as $type => $config) {
+            if ($config['target'] !== $target || !isset($this->assets[$type])) {
+                continue;
             }
 
-            $this->cacheService->cacheSet($key, $html);
+            if (isset($config['cache']) && true === $config['cache']) {
+
+                $key = $this->getCacheKey('asset_render_'.$target.'_'.$type);
+                if (null === $typeHtml = $this->cacheService->get($key)) {
+                    $typeHtml = $this->renderType($type, $config);
+                    $this->cacheService->set($key, $typeHtml);
+                }
+
+                $html .= $typeHtml;
+            } else {
+                $html .= $this->renderType($type, $config);
+            }
+        }
+
+        return $html;
+    }
+
+    private function renderType(string $type, array $config): string
+    {
+        $html = '';
+
+        usort($this->assets[$type], ['self', 'comparePriorities']);
+        foreach ($this->assets[$type] as $asset) {
+            switch ($config['render_type']) {
+                case self::RENDER_TYPE_INLINE:
+                    $html .= sprintf($config['template'], $asset['asset']);
+                    break;
+                case self::RENDER_TYPE_SCRIPT:
+                    if (0 !== strpos($asset['asset'], 'http')) {
+                        $asset['asset'] = '/'.ltrim($asset['asset'], '/');
+                    }
+                    $html .= sprintf($config['template'], $asset['asset']);
+                    break;
+                case self::RENDER_TYPE_SCRIPT_TO_INLINE:
+                    if (0 !== strpos($asset['asset'], 'http')) {
+                        $asset['asset'] = $this->webDir.'/'.ltrim($asset['asset'], '/');
+                    }
+                    $html .= sprintf($config['template'], file_get_contents($asset['asset']));
+                    break;
+            }
         }
 
         return $html;

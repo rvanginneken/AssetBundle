@@ -22,7 +22,7 @@ class CacheService
      *
      * @throws \Psr\Cache\InvalidArgumentException
      */
-    public function cacheGet(string $key)
+    public function get(string $key)
     {
         if (!$this->isProd() || !$this->cacheItemPool->hasItem($key)) {
             return null;
@@ -37,7 +37,7 @@ class CacheService
      *
      * @throws \Psr\Cache\InvalidArgumentException
      */
-    public function cacheSet(string $key, $value): void
+    public function set(string $key, $value): void
     {
         if (!$this->isProd()) {
             return;
