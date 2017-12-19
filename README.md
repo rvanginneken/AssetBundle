@@ -18,7 +18,7 @@ Enable the bundle in the AppKernel:
     {
         $bundles = [
             // ...
-            new \RVanGinneken\AssetBundle\RVanGinnekenAssetBundle(),
+            new RVanGinneken\AssetBundle\RVanGinnekenAssetBundle(),
             // ...
         ];
     }
