@@ -1,18 +1,28 @@
 <?xml version="1.0" ?>
 
 <container xmlns="http://symfony.com/schema/dic/services"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
+        <service id="RVanGinneken\AssetBundle\Cache\AssetCacheClearer" public="false">
+            <argument>%kernel.root_dir%/../web/</argument>
+            <tag name="kernel.cache_clearer" />
+        </service>
         <service id="RVanGinneken\AssetBundle\Services\AssetService" public="false">
             <argument type="service" id="request_stack" />
+            <argument type="service" id="RVanGinneken\AssetBundle\Services\CacheService" />
+            <argument type="service" id="RVanGinneken\AssetBundle\Services\BrowserCacheBustingService" />
+            <argument>%kernel.root_dir%/../web/</argument>
+        </service>
+        <service id="RVanGinneken\AssetBundle\Services\BrowserCacheBustingService" public="false">
+            <argument>%kernel.debug%</argument>
             <argument type="service" id="RVanGinneken\AssetBundle\Services\CacheService" />
             <argument>%kernel.root_dir%/../web/</argument>
         </service>
         <service id="RVanGinneken\AssetBundle\Services\CacheService" public="false">
+            <argument>%kernel.debug%</argument>
             <argument type="service" id="Psr\Cache\CacheItemPoolInterface" />
-            <argument>%kernel.environment%</argument>
         </service>
         <service id="RVanGinneken\AssetBundle\Twig\AssetExtension" public="false">
             <argument type="service" id="RVanGinneken\AssetBundle\Services\AssetService" />
@@ -20,7 +30,7 @@
         </service>
         <service id="RVanGinneken\AssetBundle\Listener\KernelResponseListener" public="false">
             <argument type="service" id="RVanGinneken\AssetBundle\Services\AssetService" />
-            <tag name="kernel.event_listener" event="kernel.response" priority="-127" />
+            <tag name="kernel.event_listener" event="kernel.response" priority="-128" />
         </service>
     </services>
 </container>

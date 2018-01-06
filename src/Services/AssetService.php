@@ -15,15 +15,21 @@ class AssetService
 
     private $requestStack;
     private $cacheService;
+    private $browserCacheBustingService;
     private $webDir;
 
     private $types;
     private $assets = [];
 
-    public function __construct(RequestStack $requestStack, CacheService $cacheService, string $webDir)
-    {
+    public function __construct(
+        RequestStack $requestStack,
+        CacheService $cacheService,
+        BrowserCacheBustingService $browserCacheBustingService,
+        string $webDir
+    ) {
         $this->requestStack = $requestStack;
         $this->cacheService = $cacheService;
+        $this->browserCacheBustingService = $browserCacheBustingService;
         $this->webDir = realpath($webDir);
 
         $this->types = [
@@ -82,7 +88,7 @@ class AssetService
                     break;
                 case self::RENDER_TYPE_SCRIPT:
                     if (0 !== strpos($asset['asset'], 'http')) {
-                        $asset['asset'] = '/'.ltrim($asset['asset'], '/');
+                        $asset['asset'] = $this->browserCacheBustingService->getBustedFile($asset['asset']);
                     }
                     $html .= sprintf($config['template'], $asset['asset']);
                     break;

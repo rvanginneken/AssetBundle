@@ -6,48 +6,30 @@ use Psr\Cache\CacheItemPoolInterface;
 
 class CacheService
 {
+    private $debug;
     private $cacheItemPool;
-    private $environment;
 
-    public function __construct(CacheItemPoolInterface $cacheItemPool, string $environment)
+    public function __construct(bool $debug, CacheItemPoolInterface $cacheItemPool)
     {
+        $this->debug = $debug;
         $this->cacheItemPool = $cacheItemPool;
-        $this->environment = $environment;
     }
 
-    /**
-     * @param string $key
-     *
-     * @return mixed|null
-     *
-     * @throws \Psr\Cache\InvalidArgumentException
-     */
     public function get(string $key)
     {
-        if (!$this->isProd() || !$this->cacheItemPool->hasItem($key)) {
+        if ($this->debug || !$this->cacheItemPool->hasItem($key)) {
             return null;
         }
 
         return $this->cacheItemPool->getItem($key)->get();
     }
 
-    /**
-     * @param string $key
-     * @param mixed  $value
-     *
-     * @throws \Psr\Cache\InvalidArgumentException
-     */
     public function set(string $key, $value): void
     {
-        if (!$this->isProd()) {
+        if ($this->debug) {
             return;
         }
 
         $this->cacheItemPool->save($this->cacheItemPool->getItem($key)->set($value));
-    }
-
-    private function isProd(): bool
-    {
-        return 'prod' === $this->environment;
     }
 }

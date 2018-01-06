@@ -4,6 +4,9 @@ AssetBundle
 The AssetBundle makes it easy to include assets at any point in your twig files and render it at the end of the \<head\> and \<body\> tags in the page. No blocks needed.
 Stylesheets are printed inline and all results are cached in production, following Symfony's *cache.app* settings.
 
+In debug mode, actual assets are served. In no-debug mode, files are copied to *web/asset_cache* with unique naming, to break browser cache. The directory is automatically 
+cleared with the cache:clear command.
+
 Installation
 ------------
 
@@ -22,6 +25,13 @@ Enable the bundle in the AppKernel:
             // ...
         ];
     }
+```
+
+Ignore the asset cache directory (used to bust browser cache):
+```text
+    # ..
+    /web/asset_cache/
+    # ..
 ```
 
 That's it.
