@@ -20,9 +20,9 @@
             <argument type="service" id="rvanginneken.asset.service.cache" />
             <argument>%kernel.root_dir%/../web/</argument>
         </service>
-        <service id="rvanginneken.asset.service.cache" class="RVanGinneken\AssetBundle\Services\CacheService" public="false">
+        <service id="rvanginneken.asset.service.cache" class="RVanGinneken\AssetBundle\Services\CacheService" public="true">
             <argument>%kernel.debug%</argument>
-            <argument type="service" id="cache.app" />
+            <argument>%kernel.cache_dir%</argument>
         </service>
         <service id="rvanginneken.asset.twig.asset_extension" class="RVanGinneken\AssetBundle\Twig\AssetExtension" public="false">
             <argument type="service" id="rvanginneken.asset.service.asset" />
