@@ -5,31 +5,31 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
-        <service id="RVanGinneken\AssetBundle\Cache\AssetCacheClearer" public="false">
+        <service id="rvanginneken.asset.cache.asset_cache_clearer" class="RVanGinneken\AssetBundle\Cache\AssetCacheClearer" public="false">
             <argument>%kernel.root_dir%/../web/</argument>
             <tag name="kernel.cache_clearer" />
         </service>
-        <service id="RVanGinneken\AssetBundle\Services\AssetService" public="false">
+        <service id="rvanginneken.asset.service.asset" class="RVanGinneken\AssetBundle\Services\AssetService" public="false">
             <argument type="service" id="request_stack" />
-            <argument type="service" id="RVanGinneken\AssetBundle\Services\CacheService" />
-            <argument type="service" id="RVanGinneken\AssetBundle\Services\BrowserCacheBustingService" />
+            <argument type="service" id="rvanginneken.asset.service.cache" />
+            <argument type="service" id="rvanginneken.asset.service.browser_cache_buster" />
             <argument>%kernel.root_dir%/../web/</argument>
         </service>
-        <service id="RVanGinneken\AssetBundle\Services\BrowserCacheBustingService" public="false">
+        <service id="rvanginneken.asset.service.browser_cache_buster" class="RVanGinneken\AssetBundle\Services\BrowserCacheBustingService" public="false">
             <argument>%kernel.debug%</argument>
-            <argument type="service" id="RVanGinneken\AssetBundle\Services\CacheService" />
+            <argument type="service" id="rvanginneken.asset.service.cache" />
             <argument>%kernel.root_dir%/../web/</argument>
         </service>
-        <service id="RVanGinneken\AssetBundle\Services\CacheService" public="false">
+        <service id="rvanginneken.asset.service.cache" class="RVanGinneken\AssetBundle\Services\CacheService" public="false">
             <argument>%kernel.debug%</argument>
-            <argument type="service" id="Psr\Cache\CacheItemPoolInterface" />
+            <argument type="service" id="cache.app" />
         </service>
-        <service id="RVanGinneken\AssetBundle\Twig\AssetExtension" public="false">
-            <argument type="service" id="RVanGinneken\AssetBundle\Services\AssetService" />
+        <service id="rvanginneken.asset.twig.asset_extension" class="RVanGinneken\AssetBundle\Twig\AssetExtension" public="false">
+            <argument type="service" id="rvanginneken.asset.service.asset" />
             <tag name="twig.extension" />
         </service>
-        <service id="RVanGinneken\AssetBundle\Listener\KernelResponseListener" public="false">
-            <argument type="service" id="RVanGinneken\AssetBundle\Services\AssetService" />
+        <service id="rvanginneken.asset.listener.kernel_response" class="RVanGinneken\AssetBundle\Listener\KernelResponseListener" public="true">
+            <argument type="service" id="rvanginneken.asset.service.asset" />
             <tag name="kernel.event_listener" event="kernel.response" priority="-128" />
         </service>
     </services>
