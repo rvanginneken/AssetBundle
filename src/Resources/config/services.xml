@@ -28,7 +28,7 @@
             <argument type="service" id="RVanGinneken\AssetBundle\Services\AssetService" />
             <tag name="twig.extension" />
         </service>
-        <service id="RVanGinneken\AssetBundle\Listener\KernelResponseListener" class="RVanGinneken\AssetBundle\Listener\KernelResponseListener" public="false">
+        <service id="RVanGinneken\AssetBundle\Listener\KernelResponseListener" class="RVanGinneken\AssetBundle\Listener\KernelResponseListener" public="true">
             <argument type="service" id="RVanGinneken\AssetBundle\Services\AssetService" />
             <tag name="kernel.event_listener" event="kernel.response" priority="-128" />
         </service>
