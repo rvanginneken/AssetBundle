@@ -21,10 +21,10 @@
     "php": "^7.1",
     "psr/cache": "^1.0",
     "twig/twig": "^2.0",
-    "symfony/config": "^3.3",
-    "symfony/dependency-injection": "^3.3",
-    "symfony/http-foundation": "^3.3",
-    "symfony/http-kernel": "^3.3"
+    "symfony/config": "^3.1",
+    "symfony/dependency-injection": "^3.1",
+    "symfony/http-foundation": "^3.1",
+    "symfony/http-kernel": "^3.1"
   },
   "autoload": {
     "psr-4": {
