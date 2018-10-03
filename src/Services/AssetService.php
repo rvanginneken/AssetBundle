@@ -16,7 +16,7 @@ class AssetService
     private $requestStack;
     private $cacheService;
     private $browserCacheBustingService;
-    private $webDir;
+    private $publicDir;
 
     private $types;
     private $assets = [];
@@ -25,12 +25,12 @@ class AssetService
         RequestStack $requestStack,
         CacheService $cacheService,
         BrowserCacheBustingService $browserCacheBustingService,
-        string $webDir
+        string $publicDir
     ) {
         $this->requestStack = $requestStack;
         $this->cacheService = $cacheService;
         $this->browserCacheBustingService = $browserCacheBustingService;
-        $this->webDir = realpath($webDir);
+        $this->publicDir = realpath($publicDir);
 
         $this->types = [
             'css_file' => ['target' => self::TARGET_HEAD, 'template' => '<style>%s</style>', 'render_type' => self::RENDER_TYPE_SCRIPT_TO_INLINE, 'priority' => 128, 'cache' => true],
@@ -94,7 +94,7 @@ class AssetService
                     break;
                 case self::RENDER_TYPE_SCRIPT_TO_INLINE:
                     if (0 !== strpos($asset['asset'], 'http')) {
-                        $asset['asset'] = $this->webDir.'/'.ltrim($asset['asset'], '/');
+                        $asset['asset'] = $this->publicDir.'/'.ltrim($asset['asset'], '/');
                     }
                     $html .= sprintf($config['template'], file_get_contents($asset['asset']));
                     break;

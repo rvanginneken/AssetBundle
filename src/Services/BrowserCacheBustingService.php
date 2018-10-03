@@ -6,13 +6,13 @@ class BrowserCacheBustingService
 {
     private $debug;
     private $cacheService;
-    private $webDir;
+    private $publicDir;
 
-    public function __construct(bool $debug, CacheService $cacheService, string $webDir)
+    public function __construct(bool $debug, CacheService $cacheService, string $publicDir)
     {
         $this->debug = $debug;
         $this->cacheService = $cacheService;
-        $this->webDir = realpath($webDir);
+        $this->publicDir = realpath($publicDir);
     }
 
     public function getBustedFile(string $file): string
@@ -27,11 +27,11 @@ class BrowserCacheBustingService
             $bustedFile = '/asset_cache/'.uniqid().'.'.pathinfo($file, PATHINFO_EXTENSION);
             $this->cacheService->set($key, $bustedFile);
 
-            if (!file_exists(dirname($this->webDir.$bustedFile))) {
-                mkdir(dirname($this->webDir.$bustedFile), 0755, true);
+            if (!file_exists(dirname($this->publicDir.$bustedFile))) {
+                mkdir(dirname($this->publicDir.$bustedFile), 0755, true);
             }
 
-            copy($this->webDir.$file, $this->webDir.$bustedFile);
+            copy($this->publicDir.$file, $this->publicDir.$bustedFile);
         }
 
         return $bustedFile;
