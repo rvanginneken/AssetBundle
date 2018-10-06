@@ -2,6 +2,7 @@
 
 namespace RVanGinneken\AssetBundle\Services;
 
+use Symfony\Component\Cache\Adapter\AdapterInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class AssetService
@@ -14,30 +15,28 @@ class AssetService
     private const RENDER_TYPE_SCRIPT_TO_INLINE = 3;
 
     private $requestStack;
-    private $cacheService;
+    private $cache;
     private $browserCacheBustingService;
-    private $webDir;
+    private $publicDir;
 
     private $types;
-    private $assets = [];
+    private $assets = [
+        'css_file' => ['target' => self::TARGET_HEAD, 'template' => '<style>%s</style>', 'render_type' => self::RENDER_TYPE_SCRIPT_TO_INLINE, 'priority' => 128, 'cache' => true],
+        'css' => ['target' => self::TARGET_HEAD, 'template' => '%s', 'render_type' => self::RENDER_TYPE_INLINE, 'priority' => 64, 'cache' => true],
+        'javascript_file' => ['target' => self::TARGET_BODY, 'template' => '<script type="text/javascript" src="%s"></script>', 'render_type' => self::RENDER_TYPE_SCRIPT, 'priority' => 128, 'cache' => true],
+        'javascript' => ['target' => self::TARGET_BODY, 'template' => '%s', 'render_type' => self::RENDER_TYPE_INLINE, 'priority' => 64, 'cache' => false],
+    ];
 
     public function __construct(
         RequestStack $requestStack,
-        CacheService $cacheService,
+        AdapterInterface $cache,
         BrowserCacheBustingService $browserCacheBustingService,
-        string $webDir
+        string $publicDir
     ) {
         $this->requestStack = $requestStack;
-        $this->cacheService = $cacheService;
+        $this->cache = $cache;
         $this->browserCacheBustingService = $browserCacheBustingService;
-        $this->webDir = realpath($webDir);
-
-        $this->types = [
-            'css_file' => ['target' => self::TARGET_HEAD, 'template' => '<style>%s</style>', 'render_type' => self::RENDER_TYPE_SCRIPT_TO_INLINE, 'priority' => 128, 'cache' => true],
-            'css' => ['target' => self::TARGET_HEAD, 'template' => '%s', 'render_type' => self::RENDER_TYPE_INLINE, 'priority' => 64, 'cache' => true],
-            'javascript_file' => ['target' => self::TARGET_BODY, 'template' => '<script type="text/javascript" src="%s"></script>', 'render_type' => self::RENDER_TYPE_SCRIPT, 'priority' => 128, 'cache' => true],
-            'javascript' => ['target' => self::TARGET_BODY, 'template' => '%s', 'render_type' => self::RENDER_TYPE_INLINE, 'priority' => 64, 'cache' => false],
-        ];
+        $this->publicDir = realpath($publicDir);
     }
 
     public function addAsset(string $type, string $asset, int $priority): void
@@ -61,13 +60,11 @@ class AssetService
 
             if (isset($config['cache']) && true === $config['cache']) {
 
-                $key = $this->getCacheKey('asset_render_'.$target.'_'.$type);
-                if (null === $typeHtml = $this->cacheService->get($key)) {
-                    $typeHtml = $this->renderType($type, $config);
-                    $this->cacheService->set($key, $typeHtml);
+                $item = $this->cache->getItem($this->getCacheKey('asset_render_'.$target.'_'.$type));
+                if (false === $item->isHit()) {
+                    $this->cache->save($this->renderType($type, $config));
                 }
-
-                $html .= $typeHtml;
+                $html .= $item->get();
             } else {
                 $html .= $this->renderType($type, $config);
             }
@@ -94,7 +91,7 @@ class AssetService
                     break;
                 case self::RENDER_TYPE_SCRIPT_TO_INLINE:
                     if (0 !== strpos($asset['asset'], 'http')) {
-                        $asset['asset'] = $this->webDir.'/'.ltrim($asset['asset'], '/');
+                        $asset['asset'] = $this->publicDir.'/'.ltrim($asset['asset'], '/');
                     }
                     $html .= sprintf($config['template'], file_get_contents($asset['asset']));
                     break;
