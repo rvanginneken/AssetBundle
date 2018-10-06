@@ -14,9 +14,6 @@ class AssetExtension extends AbstractExtension
         $this->assetService = $assetService;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getTokenParsers(): array
     {
         return [
@@ -24,7 +21,7 @@ class AssetExtension extends AbstractExtension
         ];
     }
 
-    public function addAsset(string $type, string $asset, int $priority)
+    public function addAsset(string $type, string $asset, int $priority): void
     {
         $this->assetService->addAsset($type, $asset, $priority);
     }
