@@ -19,13 +19,13 @@ class AssetService
     private $browserCacheBustingService;
     private $publicDir;
 
-    private $types;
-    private $assets = [
+    private $types = [
         'css_file' => ['target' => self::TARGET_HEAD, 'template' => '<style>%s</style>', 'render_type' => self::RENDER_TYPE_SCRIPT_TO_INLINE, 'priority' => 128, 'cache' => true],
         'css' => ['target' => self::TARGET_HEAD, 'template' => '%s', 'render_type' => self::RENDER_TYPE_INLINE, 'priority' => 64, 'cache' => true],
         'javascript_file' => ['target' => self::TARGET_BODY, 'template' => '<script type="text/javascript" src="%s"></script>', 'render_type' => self::RENDER_TYPE_SCRIPT, 'priority' => 128, 'cache' => true],
         'javascript' => ['target' => self::TARGET_BODY, 'template' => '%s', 'render_type' => self::RENDER_TYPE_INLINE, 'priority' => 64, 'cache' => false],
     ];
+    private $assets = [];
 
     public function __construct(
         RequestStack $requestStack,
@@ -62,7 +62,7 @@ class AssetService
 
                 $item = $this->cache->getItem($this->getCacheKey('asset_render_'.$target.'_'.$type));
                 if (false === $item->isHit()) {
-                    $this->cache->save($this->renderType($type, $config));
+                    $this->cache->save($item->set($this->renderType($type, $config)));
                 }
                 $html .= $item->get();
             } else {
