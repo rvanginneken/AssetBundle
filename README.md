@@ -15,7 +15,7 @@ Require the bundle with composer:
     $ composer require rvanginneken/asset-bundle
 ```
 
-Enable the bundle in the `config/bundles.php:
+Enable the bundle in the `config/bundles.php`  (_or `AppKernel.php` in < sf4_):
 
 ```php
     return [
@@ -25,7 +25,7 @@ Enable the bundle in the `config/bundles.php:
     ];
 ```
 
-Ignore the asset cache directory (used to bust browser cache). Put the following in your .gitignore:
+Ignore the asset cache directory (used to bust browser cache). Put the following in your `.gitignore` (_use `web` in < sf4_):
 ```text
     # ..
     /public/asset_cache/
