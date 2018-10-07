@@ -8,13 +8,13 @@ class BrowserCacheBustingService
 {
     private $debug;
     private $cache;
-    private $publicDir;
+    private $publicPath;
 
-    public function __construct(bool $debug, AdapterInterface $cache, string $publicDir)
+    public function __construct(bool $debug, AdapterInterface $cache, string $publicPath)
     {
         $this->debug = $debug;
         $this->cache = $cache;
-        $this->publicDir = realpath($publicDir);
+        $this->publicPath = $publicPath;
     }
 
     public function getBustedFile(string $file): string
@@ -30,10 +30,10 @@ class BrowserCacheBustingService
 
             $this->cache->save($item->set($bustedFile));
 
-            if (!file_exists(dirname($this->publicDir.$bustedFile))) {
-                mkdir(dirname($this->publicDir.$bustedFile), 0755, true);
+            if (!file_exists(dirname($this->publicPath.$bustedFile))) {
+                mkdir(dirname($this->publicPath.$bustedFile), 0755, true);
             }
-            copy($this->publicDir.$file, $this->publicDir.$bustedFile);
+            copy($this->publicPath.$file, $this->publicPath.$bustedFile);
         }
 
         return $item->get();

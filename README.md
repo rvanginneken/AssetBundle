@@ -15,7 +15,7 @@ Require the bundle with composer:
     $ composer require rvanginneken/asset-bundle
 ```
 
-Enable the bundle in the `config/bundles.php`  (_or `AppKernel.php` in < sf4_):
+Enable the bundle in the `config/bundles.php`  (_use `AppKernel.php` before symfony 4_):
 
 ```php
     return [
@@ -25,7 +25,7 @@ Enable the bundle in the `config/bundles.php`  (_or `AppKernel.php` in < sf4_):
     ];
 ```
 
-Ignore the asset cache directory (used to bust browser cache). Put the following in your `.gitignore` (_use `web` in < sf4_):
+Ignore the asset cache directory (used to bust browser cache). Put the following in your `.gitignore` (_use `web` before symfony 4_):
 ```text
     # ..
     /public/asset_cache/
@@ -70,4 +70,12 @@ Include inline javascript:
     {%- endset -%}
     
     {% asset 'javascript', inline_javascript_hello_world, 0 %}
+```
+
+Public folder
+-------
+The bundle detects the public folder based on the symfony version. If you're using something custom you can override it by using:
+```
+    rvanginneken_asset:
+        public_folder: your_custom_folder
 ```

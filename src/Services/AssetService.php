@@ -17,7 +17,7 @@ class AssetService
     private $requestStack;
     private $cache;
     private $browserCacheBustingService;
-    private $publicDir;
+    private $publicPath;
 
     private $types = [
         'css_file' => ['target' => self::TARGET_HEAD, 'template' => '<style>%s</style>', 'render_type' => self::RENDER_TYPE_SCRIPT_TO_INLINE, 'priority' => 128, 'cache' => true],
@@ -31,12 +31,12 @@ class AssetService
         RequestStack $requestStack,
         AdapterInterface $cache,
         BrowserCacheBustingService $browserCacheBustingService,
-        string $publicDir
+        string $publicPath
     ) {
         $this->requestStack = $requestStack;
         $this->cache = $cache;
         $this->browserCacheBustingService = $browserCacheBustingService;
-        $this->publicDir = realpath($publicDir);
+        $this->publicPath = $publicPath;
     }
 
     public function addAsset(string $type, string $asset, int $priority): void
@@ -91,7 +91,7 @@ class AssetService
                     break;
                 case self::RENDER_TYPE_SCRIPT_TO_INLINE:
                     if (0 !== strpos($asset['asset'], 'http')) {
-                        $asset['asset'] = $this->publicDir.'/'.ltrim($asset['asset'], '/');
+                        $asset['asset'] = $this->publicPath.'/'.ltrim($asset['asset'], '/');
                     }
                     $html .= sprintf($config['template'], file_get_contents($asset['asset']));
                     break;

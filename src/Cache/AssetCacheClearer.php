@@ -6,17 +6,17 @@ use Symfony\Component\HttpKernel\CacheClearer\CacheClearerInterface;
 
 class AssetCacheClearer implements CacheClearerInterface
 {
-    private $publicDir;
+    private $publicPath;
 
-    public function __construct(string $publicDir)
+    public function __construct(string $publicPath)
     {
-        $this->publicDir = realpath($publicDir);
+        $this->publicPath = $publicPath;
     }
 
     public function clear($cacheDir): void
     {
         try {
-            foreach (new \DirectoryIterator($this->publicDir.'/asset_cache') as $fileInfo) {
+            foreach (new \DirectoryIterator($this->publicPath.'/asset_cache') as $fileInfo) {
                 if($fileInfo->isFile()) {
                     unlink($fileInfo->getPathname());
                 }
