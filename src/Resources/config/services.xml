@@ -23,6 +23,7 @@
         </service>
         <service id="RVanGinneken\AssetBundle\Services\CacheKeyService" public="false">
             <argument type="service" id="request_stack" />
+            <argument type="service" id="security.token_storage" />
         </service>
         <service id="RVanGinneken\AssetBundle\Twig\AssetExtension" public="false">
             <argument type="service" id="RVanGinneken\AssetBundle\Services\AssetService" />
