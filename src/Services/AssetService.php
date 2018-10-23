@@ -137,9 +137,14 @@ class AssetService
             throw new \RuntimeException('Current request is empty.');
         }
 
+        $roles = '';
+        if (null !== $user = $request->getUser() ) {
+            $roles = $user->getRoles();
+        }
+
         return $prefix.'_'.
             $request->getLocale().'_'.
-            implode('_', $request->getUser()->getRoles()).'_'.
+            $roles.'_'.
             $request->attributes->get('_route');
     }
 }
