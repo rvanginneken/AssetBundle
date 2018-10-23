@@ -15,54 +15,68 @@ class AssetService
     private const RENDER_TYPE_SCRIPT_TO_INLINE = 3;
 
     private $requestStack;
-    private $cache;
+    private $cacheAdapter;
     private $browserCacheBustingService;
     private $publicPath;
 
-    private $types = [
+    private $skipCache = false;
+    private $assets = [];
+
+    private static $types = [
         'css_file' => ['target' => self::TARGET_HEAD, 'template' => '<style>%s</style>', 'render_type' => self::RENDER_TYPE_SCRIPT_TO_INLINE, 'priority' => 128, 'cache' => true],
         'css' => ['target' => self::TARGET_HEAD, 'template' => '%s', 'render_type' => self::RENDER_TYPE_INLINE, 'priority' => 64, 'cache' => true],
         'javascript_file' => ['target' => self::TARGET_BODY, 'template' => '<script type="text/javascript" src="%s"></script>', 'render_type' => self::RENDER_TYPE_SCRIPT, 'priority' => 128, 'cache' => true],
         'javascript' => ['target' => self::TARGET_BODY, 'template' => '%s', 'render_type' => self::RENDER_TYPE_INLINE, 'priority' => 64, 'cache' => false],
     ];
-    private $assets = [];
 
     public function __construct(
         RequestStack $requestStack,
-        AdapterInterface $cache,
+        AdapterInterface $cacheAdapter,
         BrowserCacheBustingService $browserCacheBustingService,
-        string $publicPath
+        string $publicPath,
+        bool $debug
     ) {
         $this->requestStack = $requestStack;
-        $this->cache = $cache;
+        $this->cacheAdapter = $cacheAdapter;
         $this->browserCacheBustingService = $browserCacheBustingService;
         $this->publicPath = $publicPath;
+        $this->skipCache = true === $debug;
+    }
+
+    public function skipCache(): void
+    {
+        $this->skipCache = true;
     }
 
     public function addAsset(string $type, string $asset, int $priority): void
     {
-        if (!isset($this->types[$type])) {
+        if (!isset(self::$types[$type])) {
             throw new \RuntimeException('Type \''.$type.'\' is not supported by the \''.__CLASS__.'\'.');
         }
 
         $this->assets[$type][] = ['asset' => $asset, 'priority' => $priority];
     }
 
+    /**
+     * @param int $target
+     * @return string
+     * @throws \Psr\Cache\InvalidArgumentException
+     */
     public function render(int $target): string
     {
         $html = '';
 
-        uasort($this->types, ['self', 'comparePriorities']);
-        foreach ($this->types as $type => $config) {
+        uasort(self::$types, ['self', 'comparePriorities']);
+        foreach (self::$types as $type => $config) {
             if ($config['target'] !== $target || !isset($this->assets[$type])) {
                 continue;
             }
 
-            if (isset($config['cache']) && true === $config['cache']) {
+            if (false !== $this->skipCache && isset($config['cache']) && true === $config['cache']) {
 
-                $item = $this->cache->getItem($this->getCacheKey('asset_render_'.$target.'_'.$type));
+                $item = $this->cacheAdapter->getItem($this->getCacheKey('asset_render_'.$target.'_'.$type));
                 if (false === $item->isHit()) {
-                    $this->cache->save($item->set($this->renderType($type, $config)));
+                    $this->cacheAdapter->save($item->set($this->renderType($type, $config)));
                 }
                 $html .= $item->get();
             } else {
@@ -73,6 +87,12 @@ class AssetService
         return $html;
     }
 
+    /**
+     * @param string $type
+     * @param array $config
+     * @return string
+     * @throws \Psr\Cache\InvalidArgumentException
+     */
     private function renderType(string $type, array $config): string
     {
         $html = '';
@@ -117,6 +137,9 @@ class AssetService
             throw new \RuntimeException('Current request is empty.');
         }
 
-        return $prefix.'_'.$request->getLocale().'_'.$request->attributes->get('_route');
+        return $prefix.'_'.
+            $request->getLocale().'_'.
+            implode('_', $request->getUser()->getRoles()).'_'.
+            $request->attributes->get('_route');
     }
 }

@@ -34,6 +34,10 @@ class KernelResponseListener
             return;
         }
 
+        if (200 !== $response->getStatusCode()) {
+            $this->assetService->skipCache();
+        }
+
         $this->injectHtml($response, '</head>', $this->assetService->render(AssetService::TARGET_HEAD));
         $this->injectHtml($response, '</body>', $this->assetService->render(AssetService::TARGET_BODY));
     }
