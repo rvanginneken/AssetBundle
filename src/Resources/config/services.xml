@@ -10,8 +10,8 @@
             <tag name="kernel.cache_clearer" />
         </service>
         <service id="RVanGinneken\AssetBundle\Services\AssetService" public="false">
-            <argument type="service" id="request_stack" />
             <argument type="service" id="Symfony\Component\Cache\Adapter\AdapterInterface" />
+            <argument type="service" id="RVanGinneken\AssetBundle\Services\CacheKeyService" />
             <argument type="service" id="RVanGinneken\AssetBundle\Services\BrowserCacheBustingService" />
             <argument>%rvanginneken_asset.public_path%</argument>
             <argument>%kernel.debug%</argument>
@@ -20,6 +20,9 @@
             <argument type="service" id="Symfony\Component\Cache\Adapter\AdapterInterface" />
             <argument>%rvanginneken_asset.public_path%</argument>
             <argument>%kernel.debug%</argument>
+        </service>
+        <service id="RVanGinneken\AssetBundle\Services\CacheKeyService" public="false">
+            <argument type="service" id="request_stack" />
         </service>
         <service id="RVanGinneken\AssetBundle\Twig\AssetExtension" public="false">
             <argument type="service" id="RVanGinneken\AssetBundle\Services\AssetService" />

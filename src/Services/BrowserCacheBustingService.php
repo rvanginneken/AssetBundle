@@ -16,7 +16,7 @@ class BrowserCacheBustingService
     {
         $this->cacheAdapter = $cacheAdapter;
         $this->publicPath = $publicPath;
-        $this->skipCache = true === $debug;
+        $this->skipCache = $debug;
     }
 
     /**

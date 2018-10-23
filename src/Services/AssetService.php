@@ -3,7 +3,6 @@
 namespace RVanGinneken\AssetBundle\Services;
 
 use Symfony\Component\Cache\Adapter\AdapterInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 class AssetService
 {
@@ -14,8 +13,8 @@ class AssetService
     private const RENDER_TYPE_SCRIPT = 2;
     private const RENDER_TYPE_SCRIPT_TO_INLINE = 3;
 
-    private $requestStack;
     private $cacheAdapter;
+    private $cacheKey;
     private $browserCacheBustingService;
     private $publicPath;
 
@@ -30,17 +29,17 @@ class AssetService
     ];
 
     public function __construct(
-        RequestStack $requestStack,
         AdapterInterface $cacheAdapter,
+        CacheKeyService $cacheKey,
         BrowserCacheBustingService $browserCacheBustingService,
         string $publicPath,
         bool $debug
     ) {
-        $this->requestStack = $requestStack;
         $this->cacheAdapter = $cacheAdapter;
+        $this->cacheKey = $cacheKey;
         $this->browserCacheBustingService = $browserCacheBustingService;
         $this->publicPath = $publicPath;
-        $this->skipCache = true === $debug;
+        $this->skipCache = $debug;
     }
 
     public function skipCache(): void
@@ -74,7 +73,7 @@ class AssetService
 
             if (false !== $this->skipCache && isset($config['cache']) && true === $config['cache']) {
 
-                $item = $this->cacheAdapter->getItem($this->getCacheKey('asset_render_'.$target.'_'.$type));
+                $item = $this->cacheAdapter->getItem($this->cacheKey->generateKey('asset_render_'.$target.'_'.$type));
                 if (false === $item->isHit()) {
                     $this->cacheAdapter->save($item->set($this->renderType($type, $config)));
                 }
@@ -128,23 +127,5 @@ class AssetService
         }
 
         return ($a['priority'] > $b['priority']) ? -1 : +1;
-    }
-
-    private function getCacheKey(string $prefix): string
-    {
-        $request = $this->requestStack->getCurrentRequest();
-        if (null === $request) {
-            throw new \RuntimeException('Current request is empty.');
-        }
-
-        $roles = '';
-        if (null !== $user = $request->getUser() ) {
-            $roles = $user->getRoles();
-        }
-
-        return $prefix.'_'.
-            $request->getLocale().'_'.
-            $roles.'_'.
-            $request->attributes->get('_route');
     }
 }

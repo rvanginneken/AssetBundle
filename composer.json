@@ -23,6 +23,7 @@
     "symfony/config": ">=2.8",
     "symfony/dependency-injection": ">=2.8",
     "symfony/http-kernel": ">=2.8",
+    "symfony/security": ">=2.8",
     "twig/twig": ">=2.4"
   },
   "autoload": {
