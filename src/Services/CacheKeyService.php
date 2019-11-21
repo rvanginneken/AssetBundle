@@ -3,14 +3,14 @@
 namespace RVanGinneken\AssetBundle\Services;
 
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class CacheKeyService
 {
     private $requestStack;
     private $tokenStorage;
 
-    public function __construct(RequestStack $requestStack, TokenStorage $tokenStorage)
+    public function __construct(RequestStack $requestStack, TokenStorageInterface $tokenStorage)
     {
         $this->requestStack = $requestStack;
         $this->tokenStorage = $tokenStorage;
